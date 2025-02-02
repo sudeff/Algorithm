@@ -1,14 +1,63 @@
 import requests
 
-# Url of file
+# Fetch the file
 url = "https://d3c33hcgiwev3.cloudfront.net/_bcb5c6658381416d19b01bfc1d3993b5_IntegerArray.txt?Expires=1738627200&Signature=lAkomt0SeaTQ~OD87e8cAX8mHr21XFVchmY1nFqgyy27XwomOGJcl2hIi4KHKavCYKyseJjzgM0OQupB1Uuizk9c5hP0tdjJ1mR8oXcMUNo-UuhLq5Uz0-jtTfQrjrflSqZbOZiOcRDgRWLr7KTE7V9H-HrKHIEo4ICVdlYaEE8_&Key-Pair-Id=APKAJLTNE6QMUY6HBC5A"
 
 response = requests.get(url)
 data = response.text  
 
-# Convert lines to array
+# Convert file content 
 numbers = [int(line) for line in data.strip().split("\n")]
 
-print(numbers[:10])  
+print(numbers[:10])  # Check the first 10 elements
 
 
+# Merge Sort based Inversion Counter
+def merge_and_count(arr, left, mid, right):
+    left_part = arr[left:mid+1]
+    right_part = arr[mid+1:right+1]
+    
+    i = j = 0
+    k = left
+    inv_count = 0
+
+    while i < len(left_part) and j < len(right_part):
+        if left_part[i] <= right_part[j]:
+            arr[k] = left_part[i]
+            i += 1
+        else:
+            arr[k] = right_part[j]
+            j += 1
+            inv_count += (mid - left + 1 - i)  # Count inversions
+        k += 1
+
+    # Copy remaining elements
+    while i < len(left_part):
+        arr[k] = left_part[i]
+        i += 1
+        k += 1
+
+    while j < len(right_part):
+        arr[k] = right_part[j]
+        j += 1
+        k += 1
+
+    return inv_count
+
+
+def merge_sort_and_count(arr, left, right):
+    if left >= right:
+        return 0  # Base case
+
+    mid = (left + right) // 2
+
+    inv_count = merge_sort_and_count(arr, left, mid)  # Count left inversions
+    inv_count += merge_sort_and_count(arr, mid + 1, right)  # Count right inversions
+    inv_count += merge_and_count(arr, left, mid, right)  # Count split inversions
+
+    return inv_count
+
+
+# Run the inversion count
+inversion_count = merge_sort_and_count(numbers, 0, len(numbers) - 1)
+print("Total number of inversions:", inversion_count)
