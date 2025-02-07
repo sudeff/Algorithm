@@ -1,0 +1,33 @@
+file_path = "mntdata_32387ba40b36359a38625cbb397eee65_QuickSort.txt"
+
+with open(file_path, "r") as file:
+    numbers = [int(line.strip()) for line in file.readlines()]
+
+def quicksort_first_pivot(arr, left, right):
+    if left >= right:
+        return 0 
+ # Eğer alt dizi boyutu 1 veya daha küçükse, işlem yapmaya gerek yok
+
+    # İlk elemanı pivot olarak seçiyorum
+    pivot_index = left
+    pivot = arr[pivot_index]
+
+    # Partition işlemi 
+    i = left + 1  # Pivotun hemen sağındaki ilk elemandan başlıyoruz
+    for j in range(left + 1, right + 1):
+        if arr[j] < pivot:  # Pivot'tan küçük elemanları sol tarafa taşı
+            arr[i], arr[j] = arr[j], arr[i]
+            i += 1
+    arr[left], arr[i - 1] = arr[i - 1], arr[left]  # Pivotu doğru konumuna yerleştir
+
+    # Yapılan karşılaştırma sayısını hesapla
+    num_comparisons = (right - left)
+
+    # Rekürsif olarak sol ve sağ alt dizileri sırala
+    num_comparisons += quicksort_first_pivot(arr, left, i - 2)  # Sol alt dizi
+    num_comparisons += quicksort_first_pivot(arr, i, right)  # Sağ alt dizi
+
+    return num_comparisons
+
+comparison_count = quicksort_first_pivot(numbers[:], 0, len(numbers) - 1)
+comparison_count  
